@@ -1,21 +1,29 @@
-import { View, Text, TouchableOpacity } from "react-native"
-import React from "react"
+import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native"
+import React, { useEffect } from "react"
 import { useRouter } from "expo-router"
+import { useAuth } from "@/context/AuthContext"
 
 const Index = () => {
   const router = useRouter()
+  const { user, loading } = useAuth()
+  console.log("User data : ", user)
 
-  return (
-    <View className="flex-1 w-full justify-center align-items-center">
-      <Text className="text-4xl">Hello</Text>
-      <TouchableOpacity
-        onPress={() => router.push("/login")}
-        className="bg-blue-500 px-6 py-6"
-      >
-        <Text className="text-4xl">Go</Text>
-      </TouchableOpacity>
-    </View>
-  )
+  useEffect(() => {
+    if (!loading) {
+      if (user) router.replace("/home")
+      else router.replace("/login")
+    }
+  }, [user, loading])
+
+  if (loading) {
+    return (
+      <View className="flex-1 w-full justify-center align-items-center">
+        <ActivityIndicator size="large" />
+      </View>
+    )
+  }
+
+  return null
 }
 
 export default Index
