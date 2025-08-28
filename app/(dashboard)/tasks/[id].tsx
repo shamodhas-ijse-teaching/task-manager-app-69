@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { createTask, getTaskById, updateTask } from "@/services/taskService"
 import { useLoader } from "@/context/LoaderContext"
+import { useAuth } from "@/context/AuthContext"
 
 const TaskFrormScreen = () => {
   const { id } = useLocalSearchParams<{ id?: string }>()
@@ -34,6 +35,8 @@ const TaskFrormScreen = () => {
     load()
   }, [id])
 
+    const { user, loading } = useAuth()
+
   const handleSubmit = async () => {
     if (!title.trim) {
       Alert.alert("Validation", "Title is required")
@@ -44,7 +47,7 @@ const TaskFrormScreen = () => {
     try {
       showLoader()
       if (isNew) {
-        await createTask({ title, description })
+        await createTask({ title, description, userId: user?.uid })
       } else {
         await updateTask(id, { title, description })
       }
